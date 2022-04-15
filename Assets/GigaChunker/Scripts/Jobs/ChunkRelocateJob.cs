@@ -61,8 +61,10 @@ namespace GigaChunker.Jobs
                 // offset newPos to reach real position
                 newPos += _offset;
                 newPos -= new int3(_chunks.RenderDistance, _chunks.RenderDistance, _chunks.RenderDistance);
-                data._inRange = math.distance(data._worldCenter, _playerPos) <= _chunks.WorldRenderDistance;
+                
+                // move chunk, and set in range value
                 data.MoveChunk(newPos);
+                data._inRange = math.distance(data._worldCenter, _playerPos) <= _chunks.WorldRenderDistance;
             }
         }
     }
