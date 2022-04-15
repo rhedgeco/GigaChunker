@@ -1,5 +1,4 @@
 using GigaChunker.Jobs;
-using Unity.Jobs;
 using UnityEngine;
 
 namespace GigaChunker
@@ -10,33 +9,36 @@ namespace GigaChunker
         [SerializeField, Range(1, 16)] private int renderDistance = 4;
         [SerializeField] private bool debug;
 
-        private GigaChunkData.ChunkDataManager _dataManager;
+        private GigaChunkDataArray _chunkDataArray;
+        private GigaChunkData.RelocateChunksJob _relocateChunks;
 
         private void Awake()
         {
-            _dataManager = new(chunkSize, renderDistance);
+            _chunkDataArray = new(chunkSize, renderDistance);
+            _relocateChunks = new(_chunkDataArray);
         }
 
         private void Update()
         {
-            _dataManager.SetPlayerPosition(transform.position);
-            _dataManager.Run();
+            _relocateChunks.Relocate(transform.position);
         }
 
         private void OnDrawGizmos()
         {
             if (!debug || !Application.isPlaying) return;
             Gizmos.color = Color.red;
-            _dataManager.ForEach((ref GigaChunkData data, int _) =>
-            {
-                if (!GigaChunkData.RefInRange(ref data)) return;
-                Gizmos.DrawWireCube(GigaChunkData.RefWorldCenter(ref data), Vector3.one * data.ChunkSize);
-            });
+            _chunkDataArray.ForEach(DrawDebugChunk);
+        }
+
+        private static void DrawDebugChunk(ref GigaChunkData data)
+        {
+            if (!GigaChunkData.RefInRange(ref data)) return;
+            Gizmos.DrawWireCube(GigaChunkData.RefWorldCenter(ref data), Vector3.one * data.ChunkSize);
         }
 
         private void OnDestroy()
         {
-            _dataManager.Dispose();
+            _chunkDataArray.Dispose();
         }
     }
 }
