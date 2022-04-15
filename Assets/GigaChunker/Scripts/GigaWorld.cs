@@ -5,9 +5,11 @@ namespace GigaChunker
 {
     public class GigaWorld : MonoBehaviour
     {
+        [Header("Generation"),SerializeField] private Transform generationCenter;
         [SerializeField, Range(8, 64)] private int chunkSize = 32;
         [SerializeField, Range(1, 16)] private int renderDistance = 4;
-        [SerializeField] private bool debug;
+        
+        [Header("Debug"), SerializeField] private bool debugChunks;
 
         private GigaChunkDataArray _chunkDataArray;
         private GigaChunkData.RelocateChunksJob _relocateChunks;
@@ -20,12 +22,12 @@ namespace GigaChunker
 
         private void Update()
         {
-            _relocateChunks.Relocate(transform.position);
+            _relocateChunks.Relocate(generationCenter.position);
         }
 
         private void OnDrawGizmos()
         {
-            if (!debug || !Application.isPlaying) return;
+            if (!debugChunks || !Application.isPlaying) return;
             Gizmos.color = Color.red;
             _chunkDataArray.ForEach(DrawDebugChunk);
         }
