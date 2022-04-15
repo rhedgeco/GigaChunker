@@ -12,13 +12,13 @@ namespace GigaChunker.Jobs
     public partial struct GigaChunkData
     {
         [BurstCompile]
-        public struct RelocateChunksJob : IJob
+        public struct ChunkRelocateJob : IJob
         {
             private int3 _offset;
             private float3 _playerPos;
             private GigaChunkDataArray _chunks;
 
-            public RelocateChunksJob(GigaChunkDataArray chunkDataArray)
+            public ChunkRelocateJob(GigaChunkDataArray chunkDataArray)
             {
                 _offset = int3.zero;
                 _playerPos = float3.zero;

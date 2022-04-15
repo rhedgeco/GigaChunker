@@ -12,17 +12,17 @@ namespace GigaChunker
         [Header("Debug"), SerializeField] private bool debugChunks;
 
         private GigaChunkDataArray _chunkDataArray;
-        private GigaChunkData.RelocateChunksJob _relocateChunks;
+        private GigaChunkData.ChunkRelocateJob _chunkRelocate;
 
         private void Awake()
         {
             _chunkDataArray = new(chunkSize, renderDistance);
-            _relocateChunks = new(_chunkDataArray);
+            _chunkRelocate = new(_chunkDataArray);
         }
 
         private void Update()
         {
-            _relocateChunks.Relocate(generationCenter.position);
+            _chunkRelocate.Relocate(generationCenter.position);
         }
 
         private void OnDrawGizmos()
