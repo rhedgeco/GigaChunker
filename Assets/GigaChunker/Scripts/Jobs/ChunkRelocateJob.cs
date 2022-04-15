@@ -9,20 +9,20 @@ using UnityEngine;
 
 namespace GigaChunker.Jobs
 {
-    public partial struct GigaChunkData
+    public partial struct GigaData
     {
         [BurstCompile]
         public struct ChunkRelocateJob : IJob
         {
             private int3 _offset;
             private float3 _playerPos;
-            private GigaChunkDataArray _chunks;
+            private GigaDataArray _chunks;
 
-            public ChunkRelocateJob(GigaChunkDataArray chunkDataArray)
+            public ChunkRelocateJob(GigaDataArray dataArray)
             {
                 _offset = int3.zero;
                 _playerPos = float3.zero;
-                _chunks = chunkDataArray;
+                _chunks = dataArray;
             }
 
             public void Relocate(Vector3 generationCenter)
@@ -34,19 +34,19 @@ namespace GigaChunker.Jobs
 
             public unsafe void Execute()
             {
-                NativeArray<GigaChunkData> array = _chunks.RawArray;
+                NativeArray<GigaData> array = _chunks.RawArray;
                 if (!array.IsCreated) throw new ObjectDisposedException("GigaDataCollection is not created.");
                 long ptr = (long) array.GetUnsafePtr();
-                long dataSize = sizeof(GigaChunkData);
+                long dataSize = sizeof(GigaData);
                 long length = array.Length * dataSize;
                 for (long i = 0; i < length; i += dataSize)
                 {
-                    ref GigaChunkData data = ref *(GigaChunkData*) (ptr + i);
+                    ref GigaData data = ref *(GigaData*) (ptr + i);
                     RelocateChunk(ref data);
                 }
             }
             
-            private void RelocateChunk(ref GigaChunkData data)
+            private void RelocateChunk(ref GigaData data)
             {
                 // create new pos and loop within array bounds
                 int3 newPos = data.Chunk3dIndex;

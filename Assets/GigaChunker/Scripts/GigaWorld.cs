@@ -12,13 +12,13 @@ namespace GigaChunker
         [Header("Debug"), SerializeField] private bool debugChunks;
         [SerializeField] private Material testMaterial;
         
-        private GigaChunkDataArray _chunkDataArray;
-        private GigaChunkData.ChunkRelocateJob _chunkRelocateJob;
+        private GigaDataArray _dataArray;
+        private GigaData.ChunkRelocateJob _chunkRelocateJob;
 
         private void Awake()
         {
-            _chunkDataArray = new(chunkSize, renderDistance);
-            _chunkRelocateJob = new(_chunkDataArray);
+            _dataArray = new(chunkSize, renderDistance);
+            _chunkRelocateJob = new(_dataArray);
         }
 
         private void Update()
@@ -30,18 +30,18 @@ namespace GigaChunker
         {
             if (!debugChunks || !Application.isPlaying) return;
             Gizmos.color = Color.red;
-            _chunkDataArray.ForEach(DrawDebugChunk);
+            _dataArray.ForEach(DrawDebugChunk);
         }
 
-        private static void DrawDebugChunk(ref GigaChunkData data)
+        private static void DrawDebugChunk(ref GigaData data)
         {
-            if (!GigaChunkData.RefInRange(ref data)) return;
-            Gizmos.DrawWireCube(GigaChunkData.RefWorldCenter(ref data), Vector3.one * data.ChunkSize);
+            if (!GigaData.RefInRange(ref data)) return;
+            Gizmos.DrawWireCube(GigaData.RefWorldCenter(ref data), Vector3.one * data.ChunkSize);
         }
 
         private void OnDestroy()
         {
-            _chunkDataArray.Dispose();
+            _dataArray.Dispose();
         }
     }
 }

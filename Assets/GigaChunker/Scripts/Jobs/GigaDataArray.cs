@@ -4,9 +4,9 @@ using Unity.Collections.LowLevel.Unsafe;
 
 namespace GigaChunker.Jobs
 {
-    public struct GigaChunkDataArray : IDisposable
+    public struct GigaDataArray : IDisposable
     {
-        private NativeArray<GigaChunkData> _array;
+        private NativeArray<GigaData> _array;
 
         public readonly int ChunkSize;
         public readonly int WorldRenderDistance;
@@ -15,9 +15,9 @@ namespace GigaChunker.Jobs
         public readonly int RenderVolume;
         
         public bool IsCreated => _array.IsCreated;
-        public NativeArray<GigaChunkData> RawArray => _array;
+        public NativeArray<GigaData> RawArray => _array;
 
-        public GigaChunkDataArray(int chunkSize, int renderDistance)
+        public GigaDataArray(int chunkSize, int renderDistance)
         {
             ChunkSize = chunkSize;
             RenderDistance = renderDistance;
@@ -44,11 +44,11 @@ namespace GigaChunker.Jobs
         {
             if (!_array.IsCreated) throw new ObjectDisposedException("GigaDataCollection is not created.");
             long ptr = (long) _array.GetUnsafePtr();
-            long dataSize = sizeof(GigaChunkData);
+            long dataSize = sizeof(GigaData);
             long length = _array.Length * dataSize;
             for (long i = 0; i < length; i += dataSize)
             {
-                ref GigaChunkData data = ref *(GigaChunkData*) (ptr + i);
+                ref GigaData data = ref *(GigaData*) (ptr + i);
                 callback(ref data);
             }
         }
@@ -59,6 +59,6 @@ namespace GigaChunker.Jobs
             _array.Dispose();
         }
         
-        public delegate void ForEachDelegate(ref GigaChunkData data);
+        public delegate void ForEachDelegate(ref GigaData data);
     }
 }
