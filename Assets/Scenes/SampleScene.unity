@@ -334,6 +334,7 @@ MonoBehaviour:
   chunkSize: 64
   renderDistance: 8
   debugChunks: 1
+  testMaterial: {fileID: 2100000, guid: a871b91a27d15e94bb6d94552f32ca89, type: 2}
 --- !u!4 &2011528247
 Transform:
   m_ObjectHideFlags: 0

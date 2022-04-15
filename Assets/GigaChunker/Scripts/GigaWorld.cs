@@ -10,19 +10,20 @@ namespace GigaChunker
         [SerializeField, Range(1, 16)] private int renderDistance = 4;
         
         [Header("Debug"), SerializeField] private bool debugChunks;
-
+        [SerializeField] private Material testMaterial;
+        
         private GigaChunkDataArray _chunkDataArray;
-        private GigaChunkData.ChunkRelocateJob _chunkRelocate;
+        private GigaChunkData.ChunkRelocateJob _chunkRelocateJob;
 
         private void Awake()
         {
             _chunkDataArray = new(chunkSize, renderDistance);
-            _chunkRelocate = new(_chunkDataArray);
+            _chunkRelocateJob = new(_chunkDataArray);
         }
 
         private void Update()
         {
-            _chunkRelocate.Relocate(generationCenter.position);
+            _chunkRelocateJob.Relocate(generationCenter.position);
         }
 
         private void OnDrawGizmos()
