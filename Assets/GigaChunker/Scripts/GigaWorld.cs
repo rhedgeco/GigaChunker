@@ -8,10 +8,12 @@ namespace GigaChunker
         [Header("Generation"),SerializeField] private Transform generationCenter;
         [SerializeField, Range(8, 64)] private int chunkSize = 32;
         [SerializeField, Range(1, 16)] private int renderDistance = 4;
+        [SerializeField, Min(0)] private float distanceToRegen = 1;
         
         [Header("Debug"), SerializeField] private bool debugChunks;
         [SerializeField] private Material testMaterial;
-        
+
+        private Vector3 _lastPosition;
         private GigaDataArray _dataArray;
         private GigaData.ChunkRelocateJob _chunkRelocateJob;
 
@@ -19,11 +21,18 @@ namespace GigaChunker
         {
             _dataArray = new(chunkSize, renderDistance);
             _chunkRelocateJob = new(_dataArray);
+
+            Vector3 centerPosition = generationCenter.position;
+            _chunkRelocateJob.Relocate(centerPosition);
+            _lastPosition = centerPosition;
         }
 
         private void Update()
         {
-            _chunkRelocateJob.Relocate(generationCenter.position);
+            Vector3 newPosition = generationCenter.position;
+            if (Vector3.Distance(_lastPosition, newPosition) < distanceToRegen) return;
+            _lastPosition = newPosition;
+            _chunkRelocateJob.Relocate(newPosition);
         }
 
         private void OnDrawGizmos()

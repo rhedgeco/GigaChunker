@@ -333,6 +333,7 @@ MonoBehaviour:
   generationCenter: {fileID: 963194228}
   chunkSize: 32
   renderDistance: 8
+  distanceToRegen: 1
   debugChunks: 1
   testMaterial: {fileID: 2100000, guid: a871b91a27d15e94bb6d94552f32ca89, type: 2}
 --- !u!4 &2011528247
