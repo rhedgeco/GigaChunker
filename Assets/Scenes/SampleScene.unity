@@ -331,7 +331,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   generationCenter: {fileID: 963194228}
-  chunkSize: 64
+  chunkSize: 32
   renderDistance: 8
   debugChunks: 1
   testMaterial: {fileID: 2100000, guid: a871b91a27d15e94bb6d94552f32ca89, type: 2}
