@@ -1,12 +1,11 @@
 using GigaChunker.DataTypes;
-using GigaChunker.Jobs;
 using UnityEngine;
 
 namespace GigaChunker
 {
     public class GigaWorld : MonoBehaviour
     {
-        [Header("Generation"),SerializeField] private Transform generationCenter;
+        [Header("Generation"),SerializeField] private Transform center;
         [SerializeField, Range(8, 64)] private int chunkSize = 32;
         [SerializeField, Range(1, 16)] private int renderDistance = 4;
         [SerializeField, Min(0)] private float distanceToRegen = 1;
@@ -15,43 +14,43 @@ namespace GigaChunker
         [SerializeField] private Material testMaterial;
 
         private Vector3 _lastPosition;
-        private GigaDataArray _dataArray;
-        private GigaData.ChunkRelocateJob _chunkRelocateJob;
+        private GigaChunkData.Array _chunkDataArray;
 
         private void Awake()
         {
-            _dataArray = new(chunkSize, renderDistance);
-            _chunkRelocateJob = new(_dataArray);
+            _chunkDataArray = new(chunkSize, renderDistance);
 
-            Vector3 centerPosition = generationCenter.position;
-            _chunkRelocateJob.Relocate(centerPosition);
+            Vector3 centerPosition = center.position;
+            _chunkDataArray.Relocate(centerPosition);
             _lastPosition = centerPosition;
         }
 
         private void Update()
         {
-            Vector3 newPosition = generationCenter.position;
+            Vector3 newPosition = center.position;
             if (Vector3.Distance(_lastPosition, newPosition) < distanceToRegen) return;
             _lastPosition = newPosition;
-            _chunkRelocateJob.Relocate(newPosition);
+            _chunkDataArray.Relocate(newPosition);
         }
 
         private void OnDrawGizmos()
         {
             if (!debugChunks || !Application.isPlaying) return;
+            Gizmos.color = new(0, 1, 0, 0.1f);
+            Gizmos.DrawSphere(center.position, _chunkDataArray.WorldRenderDistance);
             Gizmos.color = Color.red;
-            _dataArray.ForEach(DrawDebugChunk);
+            _chunkDataArray.ForEach(DrawDebugChunk);
         }
 
-        private static void DrawDebugChunk(ref GigaData data)
+        private static void DrawDebugChunk(ref GigaChunkData data)
         {
-            if (!GigaData.RefInRange(ref data)) return;
-            Gizmos.DrawWireCube(GigaData.RefWorldCenter(ref data), Vector3.one * data.ChunkSize);
+            if (!GigaChunkData.RefInRange(ref data)) return;
+            Gizmos.DrawWireCube(GigaChunkData.RefWorldCenter(ref data), Vector3.one * data.ChunkSize);
         }
 
         private void OnDestroy()
         {
-            _dataArray.Dispose();
+            _chunkDataArray.Dispose();
         }
     }
 }

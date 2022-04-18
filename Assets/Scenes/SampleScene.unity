@@ -330,7 +330,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b3cb58132ab0e6428923c8d320e9599, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  generationCenter: {fileID: 963194228}
+  center: {fileID: 963194228}
   chunkSize: 32
   renderDistance: 8
   distanceToRegen: 1

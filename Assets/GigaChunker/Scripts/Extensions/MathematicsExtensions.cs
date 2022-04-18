@@ -7,9 +7,9 @@ namespace GigaChunker.Extensions
         public static int3 RoundToInt(this float3 float3)
         {
             return new(
-                (int) (float3.x + 0.5f),
-                (int) (float3.y + 0.5f),
-                (int) (float3.z + 0.5f)
+                (int) math.round(float3.x),
+                (int) math.round(float3.y),
+                (int) math.round(float3.z)
             );
         }
 

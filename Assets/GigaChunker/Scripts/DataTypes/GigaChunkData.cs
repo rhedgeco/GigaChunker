@@ -1,9 +1,9 @@
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace GigaChunker.Jobs
+namespace GigaChunker.DataTypes
 {
-    public partial struct GigaData
+    public partial struct GigaChunkData
     {
         public readonly int ChunkSize;
         public readonly int ChunkIndex;
@@ -16,13 +16,13 @@ namespace GigaChunker.Jobs
         private bool _inRange;
 
         // expose private editable values by ref so that copying does not occur on read
-        public static ref readonly int3 RefChunkPosition(ref GigaData gigaData) => ref gigaData._chunkPosition;
-        public static ref readonly float3 RefWorldPosition(ref GigaData gigaData) => ref gigaData._worldPosition;
-        public static ref readonly float3 RefWorldCenter(ref GigaData gigaData) => ref gigaData._worldCenter;
-        public static ref readonly Matrix4x4 RefWorldMatrix(ref GigaData gigaData) => ref gigaData._worldMatrix;
-        public static ref readonly bool RefInRange(ref GigaData gigaData) => ref gigaData._inRange;
-
-        public GigaData(int chunkSize, int index, int3 index3d)
+        public static ref readonly int3 RefChunkPosition(ref GigaChunkData gigaData) => ref gigaData._chunkPosition;
+        public static ref readonly float3 RefWorldPosition(ref GigaChunkData gigaData) => ref gigaData._worldPosition;
+        public static ref readonly float3 RefWorldCenter(ref GigaChunkData gigaData) => ref gigaData._worldCenter;
+        public static ref readonly Matrix4x4 RefWorldMatrix(ref GigaChunkData gigaData) => ref gigaData._worldMatrix;
+        public static ref readonly bool RefInRange(ref GigaChunkData gigaData) => ref gigaData._inRange;
+        
+        public GigaChunkData(int chunkSize, int index, int3 index3d)
         {
             ChunkSize = chunkSize;
             ChunkIndex = index;
@@ -34,7 +34,7 @@ namespace GigaChunker.Jobs
             _worldMatrix = Matrix4x4.Translate(_worldPosition);
             _inRange = false;
         }
-
+        
         private void MoveChunk(int3 chunkPosition)
         {
             if (_chunkPosition.Equals(chunkPosition)) return;
