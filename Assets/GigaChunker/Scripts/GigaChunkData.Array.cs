@@ -4,7 +4,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using UnityEngine;
 
-namespace GigaChunker.DataTypes
+namespace GigaChunker
 {
     public partial struct GigaChunkData
     {

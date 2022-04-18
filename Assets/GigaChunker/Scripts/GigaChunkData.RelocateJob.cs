@@ -6,7 +6,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace GigaChunker.DataTypes
+namespace GigaChunker
 {
     public partial struct GigaChunkData
     {
