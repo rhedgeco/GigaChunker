@@ -1,3 +1,4 @@
+using GigaChunker.DataTypes;
 using GigaChunker.Jobs;
 using UnityEngine;
 

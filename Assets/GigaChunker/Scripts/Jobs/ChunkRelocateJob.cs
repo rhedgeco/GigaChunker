@@ -1,4 +1,5 @@
 using System;
+using GigaChunker.DataTypes;
 using GigaChunker.Extensions;
 using Unity.Burst;
 using Unity.Collections;

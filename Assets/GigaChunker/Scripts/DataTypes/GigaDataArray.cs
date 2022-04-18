@@ -1,8 +1,9 @@
 using System;
+using GigaChunker.Jobs;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 
-namespace GigaChunker.Jobs
+namespace GigaChunker.DataTypes
 {
     public struct GigaDataArray : IDisposable
     {
