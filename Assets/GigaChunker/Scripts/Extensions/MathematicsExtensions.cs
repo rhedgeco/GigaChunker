@@ -12,5 +12,12 @@ namespace GigaChunker.Extensions
                 (int) (float3.z + 0.5f)
             );
         }
+
+        public static void Set(this ref int3 value, int x, int y, int z)
+        {
+            value.x = x;
+            value.y = y;
+            value.z = z;
+        }
     }
 }
