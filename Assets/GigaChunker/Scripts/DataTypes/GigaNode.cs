@@ -6,10 +6,8 @@ namespace GigaChunker.DataTypes
         public AxisWeights XWeight;
         public AxisWeights YWeight;
         public AxisWeights ZWeight;
-        public AxisOffset Offset;
 
-        public void Set(byte type, AxisWeights xWeight, AxisWeights yWeight, AxisWeights zWeight,
-            AxisOffset offset = default)
+        public void Set(byte type, AxisWeights xWeight, AxisWeights yWeight, AxisWeights zWeight)
         {
             Type = type;
             XWeight = xWeight;

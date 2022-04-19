@@ -27,11 +27,11 @@ namespace TerrainGeneration.GenerationProcessors
             );
         }
 
-        private static byte CreateNodeWeight(float baseWeight, float altWeight)
+        private static sbyte CreateNodeWeight(float baseWeight, float altWeight)
         {
             if (baseWeight <= 0) return 0;
             float t = (0 - baseWeight) / (altWeight - baseWeight);
-            return (byte) math.clamp(t * 255, 1, 255);
+            return (sbyte) math.clamp(t * 127, 1, 127);
         }
     }
 }
