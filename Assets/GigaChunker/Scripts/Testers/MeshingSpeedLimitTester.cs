@@ -1,3 +1,4 @@
+using System;
 using GigaChunker.DataTypes;
 using GigaChunker.Generators;
 using UnityEngine;
@@ -14,7 +15,7 @@ namespace GigaChunker.Testers
         private void Start()
         {
             _chunkNodes = new(chunkSize);
-            _generator = new(SimpleNodeProcessors.FlatGround);
+            _generator = new(SimpleNodeProcessors.Simple3dNoise);
             _generator.ProcessNow(ref _chunkNodes);
         }
 
