@@ -20,11 +20,12 @@ namespace TerrainGeneration.GenerationProcessors
             float left = noise.cnoise((floatPos + new int3(-1, 0, 0)) * CNoiseScale);
             float forward = noise.cnoise((floatPos + new int3(0, 0, 1)) * CNoiseScale);
             float back = noise.cnoise((floatPos + new int3(0, 0, -1)) * CNoiseScale);
-            node.Set(0,
-                new(CreateNodeWeight(weight, right), CreateNodeWeight(weight, left)),
-                new(CreateNodeWeight(weight, up), CreateNodeWeight(weight, down)),
-                new(CreateNodeWeight(weight, forward), CreateNodeWeight(weight, back))
-            );
+
+            AxisWeights xWeight = new(CreateNodeWeight(weight, right), CreateNodeWeight(weight, left));
+            AxisWeights yWeight = new(CreateNodeWeight(weight, right), CreateNodeWeight(weight, left));
+            AxisWeights zWeight = new(CreateNodeWeight(weight, right), CreateNodeWeight(weight, left));
+            byte type = (byte) (!xWeight.Solid && !yWeight.Solid && !zWeight.Solid ? 0 : 1);
+            node.Set(type, xWeight, yWeight, zWeight);
         }
 
         private static sbyte CreateNodeWeight(float baseWeight, float altWeight)

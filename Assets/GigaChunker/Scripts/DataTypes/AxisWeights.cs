@@ -5,6 +5,8 @@ namespace GigaChunker.DataTypes
         public sbyte Positive;
         public sbyte Negative;
 
+        public bool Solid => Positive != 0 && Negative != 0;
+
         public AxisWeights(sbyte positive, sbyte negative)
         {
             Positive = positive;
