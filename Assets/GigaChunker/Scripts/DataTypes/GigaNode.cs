@@ -3,16 +3,17 @@ namespace GigaChunker.DataTypes
     public struct GigaNode
     {
         public byte Type;
-        public AxisWeights XWeight;
-        public AxisWeights YWeight;
-        public AxisWeights ZWeight;
+        public bool Solid;
+        public AxisWeightOffset XWeightOffset;
+        public AxisWeightOffset YWeightOffset;
+        public AxisWeightOffset ZWeightOffset;
 
-        public void Set(byte type, AxisWeights xWeight, AxisWeights yWeight, AxisWeights zWeight)
+        public void Set(byte type, AxisWeightOffset xWeightOffset, AxisWeightOffset yWeightOffset, AxisWeightOffset zWeightOffset)
         {
             Type = type;
-            XWeight = xWeight;
-            YWeight = yWeight;
-            ZWeight = zWeight;
+            XWeightOffset = xWeightOffset;
+            YWeightOffset = yWeightOffset;
+            ZWeightOffset = zWeightOffset;
         }
     }
 }
