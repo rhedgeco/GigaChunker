@@ -5,11 +5,19 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
+using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace GigaChunker.Generators
 {
     public class MeshGenerator
     {
+        private static readonly VertexAttributeDescriptor[] VertexAttributes =
+        {
+            new(VertexAttribute.Position, stream: 0),
+            new(VertexAttribute.Normal, stream: 1)
+        };
+        
         private FunctionPointer<ProcessVoxel> _processor;
 
         public MeshGenerator(int initialBufferSize, ProcessVoxel processor)
@@ -21,6 +29,27 @@ namespace GigaChunker.Generators
             ref NativeList<float3> vertexBuffer, ref NativeList<float3> normalBuffer, ref NativeList<uint> indexBuffer)
         {
             new MeshGeneratorJob(in nodes, ref vertexBuffer, ref normalBuffer, ref indexBuffer, in _processor).Run();
+        }
+
+        public static Mesh CreateMesh(ref NativeList<float3> vertexBuffer, ref NativeList<float3> normalBuffer,
+            ref NativeList<uint> indexBuffer, in Bounds bounds)
+        {
+            Mesh mesh = new();
+            int vertexCount = vertexBuffer.Length;
+            int indexCount = indexBuffer.Length;
+            mesh.SetVertexBufferParams(vertexCount, VertexAttributes);
+            mesh.SetIndexBufferParams(indexCount, IndexFormat.UInt32);
+
+            mesh.subMeshCount = 1;
+            SubMeshDescriptor descriptor = new(0, vertexCount);
+            mesh.SetVertexBufferData(vertexBuffer.AsArray(), 0, 0, vertexCount);
+            mesh.SetVertexBufferData(normalBuffer.AsArray(), 0, 0, vertexCount, 1);
+            mesh.SetIndexBufferData(indexBuffer.AsArray(), 0, 0, indexCount, MeshUpdateFlags.DontValidateIndices);
+            mesh.SetSubMesh(0, descriptor, MeshUpdateFlags.DontRecalculateBounds);
+            mesh.bounds = bounds;
+            mesh.UploadMeshData(true);
+
+            return mesh;
         }
 
         public delegate void ProcessVoxel(
