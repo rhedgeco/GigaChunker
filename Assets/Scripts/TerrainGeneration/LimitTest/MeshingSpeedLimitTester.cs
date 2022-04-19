@@ -11,7 +11,7 @@ namespace TerrainGeneration.LimitTest
 
         private GigaChunkNodes _chunkNodes;
         private NodeGenerator _nodeGenerator;
-        private MeshGenerator _meshGenerator;
+        private VoxelGenerator _voxelGenerator;
 
         private void Start()
         {
