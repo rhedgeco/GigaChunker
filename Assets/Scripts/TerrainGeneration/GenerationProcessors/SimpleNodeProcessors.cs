@@ -10,6 +10,13 @@ namespace TerrainGeneration.GenerationProcessors
         private const float CNoiseScale = 0.72354f;
 
         [BurstCompile]
+        public static void SimpleFlatGround(ref GigaNode node, in int3 position)
+        {
+            if (position.y <= 5) node.Set(1, AxisWeights.Max, AxisWeights.Max, AxisWeights.Max);
+            else node.Set(0, AxisWeights.Zero, AxisWeights.Zero, AxisWeights.Zero);
+        }
+
+        [BurstCompile]
         public static void Simple3dNoise(ref GigaNode node, in int3 position)
         {
             float3 floatPos = position;

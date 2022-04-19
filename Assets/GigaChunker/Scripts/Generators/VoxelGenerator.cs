@@ -1,12 +1,11 @@
 using System;
 using GigaChunker.DataTypes;
+using GigaChunker.Extensions;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace GigaChunker.Generators
 {
@@ -19,36 +18,25 @@ namespace GigaChunker.Generators
             _processor = BurstCompiler.CompileFunctionPointer(processor);
         }
 
-        public void ProcessNow(in GigaChunkNodes nodes,
-            ref NativeList<float3> vertexBuffer, ref NativeList<float3> normalBuffer, ref NativeList<uint> indexBuffer)
+        public void ProcessNow(in GigaChunkNodes nodes, ref MeshData meshData)
         {
-            new MeshGeneratorJob(in nodes, ref vertexBuffer, ref normalBuffer, ref indexBuffer, in _processor).Run();
+            new MeshGeneratorJob(in nodes, ref meshData, in _processor).Run();
         }
 
-        public delegate void ProcessVoxel(
-            ref NativeList<float3> vertexBuffer, ref NativeList<float3> normalBuffer, ref NativeList<uint> indexBuffer,
-            in GigaNode node0, in GigaNode node1, in GigaNode node2, in GigaNode node3,
-            in GigaNode node4, in GigaNode node5, in GigaNode node6, in GigaNode node7
-        );
+        public delegate void ProcessVoxel(ref MeshData meshData, in int3 voxelOffset, in VoxelCorners voxelCorners);
 
+        [BurstCompile]
         private struct MeshGeneratorJob : IJob
         {
             private GigaChunkNodes _nodes;
-            private NativeList<float3> _vertexBuffer;
-            private NativeList<float3> _normalBuffer;
-            private NativeList<uint> _indexBuffer;
+            private MeshData _meshData;
             private readonly FunctionPointer<ProcessVoxel> _processor;
 
-            public MeshGeneratorJob(in GigaChunkNodes nodes,
-                ref NativeList<float3> vertexBuffer,
-                ref NativeList<float3> normalBuffer,
-                ref NativeList<uint> indexBuffer,
+            public MeshGeneratorJob(in GigaChunkNodes nodes, ref MeshData meshData,
                 in FunctionPointer<ProcessVoxel> processor)
             {
                 _nodes = nodes;
-                _vertexBuffer = vertexBuffer;
-                _normalBuffer = normalBuffer;
-                _indexBuffer = indexBuffer;
+                _meshData = meshData;
                 _processor = processor;
             }
 
@@ -64,22 +52,26 @@ namespace GigaChunker.Generators
                 long offsetZ = _nodes.ChunkSize * _nodes.ChunkSize;
 
                 long dataIndex = 0;
+                int3 voxelOffset = int3.zero;
+                VoxelCorners voxelCorners = new();
                 for (int x = 0; x < _nodes.ChunkSize - 1; x++)
                 {
                     for (int y = 0; y < _nodes.ChunkSize - 1; y++)
                     {
                         for (int z = 0; z < _nodes.ChunkSize - 1; z++)
                         {
-                            ref GigaNode node0 = ref *(GigaNode*) (ptr + dataIndex);
-                            ref GigaNode node1 = ref *(GigaNode*) (ptr + dataIndex + offsetX);
-                            ref GigaNode node2 = ref *(GigaNode*) (ptr + dataIndex + offsetZ);
-                            ref GigaNode node3 = ref *(GigaNode*) (ptr + dataIndex + offsetX + offsetZ);
-                            ref GigaNode node4 = ref *(GigaNode*) (ptr + dataIndex + offsetY);
-                            ref GigaNode node5 = ref *(GigaNode*) (ptr + dataIndex + offsetY + offsetX);
-                            ref GigaNode node6 = ref *(GigaNode*) (ptr + dataIndex + offsetY + offsetZ);
-                            ref GigaNode node7 = ref *(GigaNode*) (ptr + dataIndex + offsetY + offsetX + offsetZ);
-                            _processor.Invoke(ref _vertexBuffer, ref _normalBuffer, ref _indexBuffer,
-                                in node0, in node1, in node2, in node3, in node4, in node5, in node6, in node7);
+                            voxelOffset.Set(x, y, z);
+                            voxelCorners.Set(
+                                (GigaNode*) (ptr + dataIndex),
+                                (GigaNode*) (ptr + dataIndex + offsetX),
+                                (GigaNode*) (ptr + dataIndex + offsetZ),
+                                (GigaNode*) (ptr + dataIndex + offsetX + offsetZ),
+                                (GigaNode*) (ptr + dataIndex + offsetY),
+                                (GigaNode*) (ptr + dataIndex + offsetY + offsetX),
+                                (GigaNode*) (ptr + dataIndex + offsetY + offsetZ),
+                                (GigaNode*) (ptr + dataIndex + offsetY + offsetX + offsetZ)
+                            );
+                            _processor.Invoke(ref _meshData, in voxelOffset, in voxelCorners);
                             dataIndex += dataSize;
                         }
                     }
