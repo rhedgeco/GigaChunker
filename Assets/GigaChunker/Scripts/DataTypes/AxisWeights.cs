@@ -1,5 +1,3 @@
-using System;
-
 namespace GigaChunker.DataTypes
 {
     public struct AxisWeights
