@@ -29,7 +29,7 @@ namespace GigaChunker.Generators
         private struct NodeGeneratorJob : IJob
         {
             private GigaChunkNodes _nodes;
-            private FunctionPointer<ProcessNode> _processor;
+            private readonly FunctionPointer<ProcessNode> _processor;
 
             public NodeGeneratorJob(in GigaChunkNodes nodes, in FunctionPointer<ProcessNode> processor)
             {

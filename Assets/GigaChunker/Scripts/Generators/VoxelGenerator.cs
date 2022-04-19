@@ -37,7 +37,7 @@ namespace GigaChunker.Generators
             private NativeList<float3> _vertexBuffer;
             private NativeList<float3> _normalBuffer;
             private NativeList<uint> _indexBuffer;
-            private FunctionPointer<ProcessVoxel> _processor;
+            private readonly FunctionPointer<ProcessVoxel> _processor;
 
             public MeshGeneratorJob(in GigaChunkNodes nodes,
                 ref NativeList<float3> vertexBuffer,
