@@ -1,6 +1,6 @@
 using GigaChunker.DataTypes;
 using GigaChunker.Generators;
-using TerrainGeneration.GenerationProcessers;
+using TerrainGeneration.GenerationProcessors;
 using UnityEngine;
 
 namespace TerrainGeneration.LimitTest

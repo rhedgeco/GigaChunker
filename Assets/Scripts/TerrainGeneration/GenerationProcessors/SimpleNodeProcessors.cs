@@ -2,7 +2,7 @@ using GigaChunker.DataTypes;
 using Unity.Burst;
 using Unity.Mathematics;
 
-namespace TerrainGeneration.GenerationProcessers
+namespace TerrainGeneration.GenerationProcessors
 {
     [BurstCompile]
     public static class SimpleNodeProcessors
