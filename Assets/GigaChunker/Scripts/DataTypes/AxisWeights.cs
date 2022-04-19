@@ -1,3 +1,5 @@
+using System;
+
 namespace GigaChunker.DataTypes
 {
     public struct AxisWeights
@@ -11,8 +13,7 @@ namespace GigaChunker.DataTypes
             Negative = negative;
         }
 
-        public static AxisWeights Max => new() {Positive = byte.MaxValue, Negative = byte.MaxValue};
-        public static AxisWeights Mid => new() {Positive = 128, Negative = 128};
-        public static AxisWeights Min => new() {Positive = byte.MinValue, Negative = byte.MinValue};
+        public static readonly AxisWeights Zero = new(0, 0);
+        public static readonly AxisWeights Max = new(byte.MaxValue, byte.MaxValue);
     }
 }
