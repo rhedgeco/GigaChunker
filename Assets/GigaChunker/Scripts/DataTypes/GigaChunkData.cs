@@ -1,7 +1,7 @@
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace GigaChunker
+namespace GigaChunker.DataTypes
 {
     public partial struct GigaChunkData
     {

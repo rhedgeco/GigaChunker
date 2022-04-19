@@ -1,6 +1,4 @@
-using GigaChunker.DataTypes;
-
-namespace GigaChunker
+namespace GigaChunker.DataTypes
 {
     public struct GigaNode
     {
@@ -8,5 +6,13 @@ namespace GigaChunker
         public AxisWeights XWeight;
         public AxisWeights YWeight;
         public AxisWeights ZWeight;
+
+        public void Set(byte type, AxisWeights xWeight, AxisWeights yWeight, AxisWeights zWeight)
+        {
+            Type = type;
+            XWeight = xWeight;
+            YWeight = yWeight;
+            ZWeight = zWeight;
+        }
     }
 }

@@ -4,7 +4,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using UnityEngine;
 
-namespace GigaChunker
+namespace GigaChunker.DataTypes
 {
     public partial struct GigaChunkData
     {
@@ -19,7 +19,7 @@ namespace GigaChunker
             public readonly int RenderVolume;
         
             public bool IsCreated => _array.IsCreated;
-            public NativeArray<GigaChunkData> RawArray => _array;
+            public static ref readonly NativeArray<GigaChunkData> ExtractRawArray(ref Array array) => ref array._array;
 
             public Array(int chunkSize, int renderDistance)
             {

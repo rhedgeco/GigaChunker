@@ -6,7 +6,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace GigaChunker
+namespace GigaChunker.DataTypes
 {
     public partial struct GigaChunkData
     {
@@ -24,7 +24,7 @@ namespace GigaChunker
 
             public unsafe void Execute()
             {
-                NativeArray<GigaChunkData> array = _array.RawArray;
+                NativeArray<GigaChunkData> array = Array.ExtractRawArray(ref _array);
                 if (!array.IsCreated) throw new ObjectDisposedException("GigaDataCollection is not created.");
                 long ptr = (long) array.GetUnsafePtr();
                 long dataSize = sizeof(GigaChunkData);
