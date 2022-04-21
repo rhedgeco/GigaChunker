@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 
 namespace GigaChunker.DataTypes
 {
-    public unsafe struct MeshData : IDisposable
+    public readonly unsafe struct MeshData : IDisposable
     {
         private static readonly VertexAttributeDescriptor[] VertexAttributes =
         {
@@ -16,28 +16,27 @@ namespace GigaChunker.DataTypes
         };
 
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-        private AtomicSafetyHandle _safetyHandle;
+        private readonly AtomicSafetyHandle _safetyHandle;
 #endif
 
         private readonly uint _bufferSize;
 
         [NativeDisableUnsafePtrRestriction]
-        private long* _indexCount;
+        private readonly uint* _indexCount;
 
         [NativeDisableUnsafePtrRestriction]
-        private long* _vertexCount;
+        private readonly uint* _vertexCount;
 
         [NativeDisableUnsafePtrRestriction]
-        private readonly long* _vertexBuffer;
+        private readonly float3* _vertexBuffer;
 
         [NativeDisableUnsafePtrRestriction]
-        private readonly long* _normalBuffer;
+        private readonly float3* _normalBuffer;
 
         [NativeDisableUnsafePtrRestriction]
-        private readonly long* _indexBuffer;
+        private readonly uint* _indexBuffer;
 
-        public uint VertexCount => *(uint*) _vertexCount;
-        public uint IndexCount => *(uint*) _indexCount;
+        public uint VertexCount => *_vertexCount;
 
         public MeshData(int bufferSize)
         {
@@ -45,47 +44,45 @@ namespace GigaChunker.DataTypes
             _safetyHandle = AtomicSafetyHandle.Create();
 #endif
             _bufferSize = (uint) bufferSize;
-            _vertexCount = (long*) UnsafeUtility.Malloc(UnsafeUtility.SizeOf<uint>(),
+            _vertexCount = (uint*) UnsafeUtility.Malloc(UnsafeUtility.SizeOf<uint>(),
                 UnsafeUtility.AlignOf<uint>(), Allocator.Persistent);
-            _indexCount = (long*) UnsafeUtility.Malloc(UnsafeUtility.SizeOf<uint>(),
+            _indexCount = (uint*) UnsafeUtility.Malloc(UnsafeUtility.SizeOf<uint>(),
                 UnsafeUtility.AlignOf<uint>(), Allocator.Persistent);
-            _vertexBuffer = (long*) UnsafeUtility.Malloc(UnsafeUtility.SizeOf<float3>() * bufferSize,
+            _vertexBuffer = (float3*) UnsafeUtility.Malloc(UnsafeUtility.SizeOf<float3>() * bufferSize,
                 UnsafeUtility.AlignOf<float3>(), Allocator.Persistent);
-            _normalBuffer = (long*) UnsafeUtility.Malloc(UnsafeUtility.SizeOf<float3>() * bufferSize,
+            _normalBuffer = (float3*) UnsafeUtility.Malloc(UnsafeUtility.SizeOf<float3>() * bufferSize,
                 UnsafeUtility.AlignOf<float3>(), Allocator.Persistent);
-            _indexBuffer = (long*) UnsafeUtility.Malloc(UnsafeUtility.SizeOf<uint>() * bufferSize,
+            _indexBuffer = (uint*) UnsafeUtility.Malloc(UnsafeUtility.SizeOf<uint>() * bufferSize,
                 UnsafeUtility.AlignOf<uint>(), Allocator.Persistent);
         }
 
         public void Clear()
         {
-            *(uint*) _indexCount = 0;
-            *(uint*) _vertexCount = 0;
+            *_indexCount = 0;
+            *_vertexCount = 0;
         }
 
         public void AddVertex(float3 vertex, float3 normal)
         {
-            ref uint vertCount = ref *(uint*) _vertexCount;
-            if (vertCount >= _bufferSize) return;
-            long vertOffset = vertCount * sizeof(float3);
+            if (*_vertexCount >= _bufferSize) return;
+            long vertOffset = *_vertexCount * sizeof(float3);
             *(float3*) ((long) _vertexBuffer + vertOffset) = vertex;
             *(float3*) ((long) _normalBuffer + vertOffset) = normal;
-            vertCount++;
+            *_vertexCount += 1;
         }
 
         public void AddIndex(uint index)
         {
-            ref uint indexCount = ref *(uint*) _indexCount;
-            if (indexCount >= _bufferSize) return;
-            *(uint*) ((long) _indexBuffer + indexCount * sizeof(uint)) = index;
-            indexCount++;
+            if (*_indexCount >= _bufferSize) return;
+            *(uint*) ((long) _indexBuffer + *_indexCount * sizeof(uint)) = index;
+            *_indexCount += 1;
         }
 
         public Mesh CreateMesh(ref Bounds bounds)
         {
             Mesh mesh = new();
-            int vertexCount = (int) VertexCount;
-            int indexCount = (int) IndexCount;
+            int vertexCount = (int) *_vertexCount;
+            int indexCount = (int) *_indexCount;
             mesh.SetVertexBufferParams(vertexCount, VertexAttributes);
             mesh.SetIndexBufferParams(indexCount, IndexFormat.UInt32);
 
