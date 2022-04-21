@@ -4,7 +4,7 @@ using Unity.Mathematics;
 
 namespace TerrainGeneration.GenerationProcessors.MarchingCubes
 {
-    public class MarchTables
+    public static class MarchTables
     {
         // modified from http://paulbourke.net/geometry/polygonise/
         public static readonly int[] Triangulation =

@@ -23,7 +23,7 @@ namespace GigaChunker.Generators
             new MeshGeneratorJob(in nodes, ref meshData, in _processor).Run();
         }
 
-        public delegate void ProcessVoxel(ref MeshData meshData, in int3 voxelOffset, in VoxelCorners voxelCorners);
+        public delegate void ProcessVoxel(ref MeshData meshData, in float3 voxelOffset, in VoxelCorners voxelCorners);
 
         [BurstCompile]
         private struct MeshGeneratorJob : IJob
@@ -47,34 +47,40 @@ namespace GigaChunker.Generators
                 long ptr = (long) nodeArray.GetUnsafePtr();
                 long dataSize = sizeof(GigaNode);
 
-                long offsetX = 1;
-                long offsetY = _nodes.ChunkSize;
-                long offsetZ = _nodes.ChunkSize * _nodes.ChunkSize;
+                int chunkSize = _nodes.ChunkSize;
+                int voxelSize = chunkSize - 1;
+                long offsetX = dataSize;
+                long offsetY = chunkSize * dataSize;
+                long offsetZ = chunkSize * chunkSize * dataSize;
 
                 long dataIndex = 0;
-                int3 voxelOffset = int3.zero;
+                float3 voxelOffset = int3.zero;
                 VoxelCorners voxelCorners = new();
-                for (int x = 0; x < _nodes.ChunkSize - 1; x++)
+                for (int x = 0; x < voxelSize; x++)
                 {
-                    for (int y = 0; y < _nodes.ChunkSize - 1; y++)
+                    for (int y = 0; y < voxelSize; y++)
                     {
-                        for (int z = 0; z < _nodes.ChunkSize - 1; z++)
+                        for (int z = 0; z < voxelSize; z++)
                         {
                             voxelOffset.Set(x, y, z);
                             voxelCorners.Set(
-                                (GigaNode*) (ptr + dataIndex),
-                                (GigaNode*) (ptr + dataIndex + offsetX),
-                                (GigaNode*) (ptr + dataIndex + offsetZ),
-                                (GigaNode*) (ptr + dataIndex + offsetX + offsetZ),
-                                (GigaNode*) (ptr + dataIndex + offsetY),
-                                (GigaNode*) (ptr + dataIndex + offsetY + offsetX),
-                                (GigaNode*) (ptr + dataIndex + offsetY + offsetZ),
-                                (GigaNode*) (ptr + dataIndex + offsetY + offsetX + offsetZ)
+                                (GigaNode*) (ptr + (dataSize * ((x + 0L) + (y + 0L) * chunkSize + (z + 0L) * chunkSize * chunkSize))),
+                                (GigaNode*) (ptr + (dataSize * ((x + 0L) + (y + 0L) * chunkSize + (z + 1L) * chunkSize * chunkSize))),
+                                (GigaNode*) (ptr + (dataSize * ((x + 1L) + (y + 0L) * chunkSize + (z + 1L) * chunkSize * chunkSize))),
+                                (GigaNode*) (ptr + (dataSize * ((x + 1L) + (y + 0L) * chunkSize + (z + 0L) * chunkSize * chunkSize))),
+                                (GigaNode*) (ptr + (dataSize * ((x + 0L) + (y + 1L) * chunkSize + (z + 0L) * chunkSize * chunkSize))),
+                                (GigaNode*) (ptr + (dataSize * ((x + 0L) + (y + 1L) * chunkSize + (z + 1L) * chunkSize * chunkSize))),
+                                (GigaNode*) (ptr + (dataSize * ((x + 1L) + (y + 1L) * chunkSize + (z + 1L) * chunkSize * chunkSize))),
+                                (GigaNode*) (ptr + (dataSize * ((x + 1L) + (y + 1L) * chunkSize + (z + 0L) * chunkSize * chunkSize)))
                             );
                             _processor.Invoke(ref _meshData, in voxelOffset, in voxelCorners);
                             dataIndex += dataSize;
                         }
+
+                        dataIndex += offsetX;
                     }
+
+                    dataIndex += offsetY;
                 }
             }
         }

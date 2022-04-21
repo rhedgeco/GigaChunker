@@ -9,7 +9,7 @@ namespace TerrainGeneration.GenerationProcessors.MarchingCubes
     public static class MarchingCubesVoxelProcessor
     {
         [BurstCompile]
-        public static void ProcessVoxel(ref MeshData meshData, in int3 voxelOffset, in VoxelCorners voxelCorners)
+        public static void ProcessVoxel(ref MeshData meshData, in float3 voxelOffset, in VoxelCorners voxelCorners)
         {
             byte cubeIndex = 0;
             if (voxelCorners[0].Type > 0) cubeIndex |= 0b_00000001;

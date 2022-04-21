@@ -9,6 +9,14 @@ namespace GigaChunker.DataTypes
         public AxisWeights YWeight;
         public AxisWeights ZWeight;
 
+        public GigaNode(byte type, AxisWeights xWeight, AxisWeights yWeight, AxisWeights zWeight)
+        {
+            Type = type;
+            XWeight = xWeight;
+            YWeight = yWeight;
+            ZWeight = zWeight;
+        }
+
         public void Set(byte type, AxisWeights xWeight, AxisWeights yWeight, AxisWeights zWeight)
         {
             Type = type;

@@ -60,8 +60,9 @@ namespace GigaChunker.DataTypes
         {
             ref uint vertCount = ref *(uint*)_vertexCount;
             if (vertCount >= _bufferSize) return;
-            *(float3*) (_vertexBuffer + vertCount) = vertex;
-            *(float3*) (_normalBuffer + vertCount) = normal;
+            long vertOffset = vertCount * sizeof(float3);
+            *(float3*) ((long)_vertexBuffer + vertOffset) = vertex;
+            *(float3*) ((long)_normalBuffer + vertOffset) = normal;
             vertCount++;
         }
 
@@ -69,7 +70,7 @@ namespace GigaChunker.DataTypes
         {
             ref uint indexCount = ref *(uint*)_indexCount;
             if (indexCount >= _bufferSize) return;
-            *(uint*) (_indexBuffer + indexCount) = index;
+            *(uint*) ((long)_indexBuffer + indexCount * sizeof(uint)) = index;
             indexCount++;
         }
 
@@ -77,12 +78,9 @@ namespace GigaChunker.DataTypes
         {
             Mesh mesh = new();
             int vertexCount = (int) VertexCount;
-            int indexCount = (int) VertexCount;
+            int indexCount = (int) IndexCount;
             mesh.SetVertexBufferParams(vertexCount, VertexAttributes);
             mesh.SetIndexBufferParams(indexCount, IndexFormat.UInt32);
-
-            mesh.subMeshCount = 1;
-            SubMeshDescriptor descriptor = new(0, vertexCount);
 
             NativeArray<float3> vertexBuffer = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<float3>(
                 _vertexBuffer, vertexCount, Allocator.Invalid);
@@ -94,6 +92,8 @@ namespace GigaChunker.DataTypes
                 _indexBuffer, indexCount, Allocator.Invalid);
             NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref indexBuffer, AtomicSafetyHandle.Create());
 
+            mesh.subMeshCount = 1;
+            SubMeshDescriptor descriptor = new(0, vertexCount);
             mesh.SetVertexBufferData(vertexBuffer, 0, 0, vertexCount);
             mesh.SetVertexBufferData(normalBuffer, 0, 0, vertexCount, 1);
             mesh.SetIndexBufferData(indexBuffer, 0, 0, indexCount, MeshUpdateFlags.DontValidateIndices);

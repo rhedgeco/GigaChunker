@@ -332,7 +332,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa7a3c31d20c48e5b367ede9d5a06fad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkSize: 24
+  chunkSize: 32
+  debugNodes: 0
 --- !u!4 &1739756882
 Transform:
   m_ObjectHideFlags: 0

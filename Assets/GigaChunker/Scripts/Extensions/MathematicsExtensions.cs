@@ -19,5 +19,12 @@ namespace GigaChunker.Extensions
             value.y = y;
             value.z = z;
         }
+        
+        public static void Set(this ref float3 value, int x, int y, int z)
+        {
+            value.x = x;
+            value.y = y;
+            value.z = z;
+        }
     }
 }
