@@ -1,7 +1,7 @@
 using GigaChunker.DataTypes;
 using Unity.Mathematics;
 
-namespace TerrainGeneration.GenerationProcessors.MarchingCubes.DataTypes
+namespace GigaChunker.Generators.MarchData
 {
     public struct CornerRay
     {

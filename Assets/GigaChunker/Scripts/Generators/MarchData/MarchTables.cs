@@ -1,8 +1,7 @@
 using GigaChunker.DataTypes;
-using TerrainGeneration.GenerationProcessors.MarchingCubes.DataTypes;
 using Unity.Mathematics;
 
-namespace TerrainGeneration.GenerationProcessors.MarchingCubes
+namespace GigaChunker.Generators.MarchData
 {
     public static class MarchTables
     {
