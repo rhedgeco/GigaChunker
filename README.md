@@ -1,4 +1,4 @@
--*in active development*-
+**_- in active development -_**
 # Giga Chunker
 High performance 3D terrain generation for the Unity Engine, written in 100% C#.
 
