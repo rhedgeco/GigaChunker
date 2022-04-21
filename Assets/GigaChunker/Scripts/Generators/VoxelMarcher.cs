@@ -94,14 +94,14 @@ namespace GigaChunker.Generators
                                 float3 v3 = r3.GetPoint(w3);
                                 float3 normal = math.cross(v2 - v1, v3 - v1);
 
-                                _meshData.AddIndex(_meshData.VertexCount);
+                                uint vertexCount = _meshData.VertexCount;
                                 _meshData.AddVertex(v1 + voxelOffset, normal);
-
-                                _meshData.AddIndex(_meshData.VertexCount);
                                 _meshData.AddVertex(v2 + voxelOffset, normal);
-
-                                _meshData.AddIndex(_meshData.VertexCount);
                                 _meshData.AddVertex(v3 + voxelOffset, normal);
+                                
+                                _meshData.AddIndex(vertexCount++);
+                                _meshData.AddIndex(vertexCount++);
+                                _meshData.AddIndex(vertexCount);
                             }
                         }
                     }
