@@ -9,16 +9,16 @@ using Unity.Mathematics;
 
 namespace GigaChunker.Generators
 {
-    public class VoxelGenerator
+    public class VoxelMarcher
     {
         private readonly FunctionPointer<ProcessVoxel> _processor;
 
-        public VoxelGenerator(ProcessVoxel processor)
+        public VoxelMarcher(ProcessVoxel processor)
         {
             _processor = BurstCompiler.CompileFunctionPointer(processor);
         }
 
-        public void Process(in GigaChunkNodes nodes, ref MeshData meshData)
+        public void MarchNodes(in GigaChunkNodes nodes, ref MeshData meshData)
         {
             new MeshGeneratorJob(in nodes, ref meshData, in _processor).Run();
         }

@@ -19,7 +19,7 @@ namespace TerrainGeneration.LimitTest
         private MeshFilter _filter;
 
         private NodeGenerator _nodeGenerator;
-        private VoxelGenerator _voxelGenerator;
+        private VoxelMarcher _voxelMarcher;
 
         private GigaChunkNodes _chunkNodes;
         private MeshData _meshData;
@@ -35,7 +35,7 @@ namespace TerrainGeneration.LimitTest
             _bounds.SetMinMax(Vector3.zero, Vector3.one * (chunkSize - 1));
 
             _nodeGenerator = new(SimpleNodeProcessors.Simple3dNoise);
-            _voxelGenerator = new(MarchingCubesVoxelProcessor.ProcessVoxel);
+            _voxelMarcher = new(MarchingCubesVoxelProcessor.ProcessVoxel);
 
             float3 position = transform.position;
             _nodeGenerator.Process(ref _chunkNodes, position.RoundToInt());
@@ -44,7 +44,7 @@ namespace TerrainGeneration.LimitTest
         private void Update()
         {
             _meshData.Clear();
-            _voxelGenerator.Process(in _chunkNodes, ref _meshData);
+            _voxelMarcher.MarchNodes(in _chunkNodes, ref _meshData);
             DestroyImmediate(_filter.sharedMesh);
             _filter.sharedMesh = _meshData.CreateMesh(ref _bounds);
         }
