@@ -1,9 +1,10 @@
-using System;
 using GigaChunker.DataTypes;
+using GigaChunker.Extensions;
 using GigaChunker.Generators;
 using TerrainGeneration.GenerationProcessors;
 using TerrainGeneration.GenerationProcessors.MarchingCubes;
 using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace TerrainGeneration.LimitTest
@@ -35,13 +36,15 @@ namespace TerrainGeneration.LimitTest
 
             _nodeGenerator = new(SimpleNodeProcessors.Simple3dNoise);
             _voxelGenerator = new(MarchingCubesVoxelProcessor.ProcessVoxel);
-            _nodeGenerator.ProcessNow(ref _chunkNodes);
+
+            float3 position = transform.position;
+            _nodeGenerator.Process(ref _chunkNodes, position.RoundToInt());
         }
 
         private void Update()
         {
             _meshData.Clear();
-            _voxelGenerator.ProcessNow(in _chunkNodes, ref _meshData);
+            _voxelGenerator.Process(in _chunkNodes, ref _meshData);
             DestroyImmediate(_filter.sharedMesh);
             _filter.sharedMesh = _meshData.CreateMesh(ref _bounds);
         }

@@ -18,7 +18,7 @@ namespace GigaChunker.Generators
             _processor = BurstCompiler.CompileFunctionPointer(processor);
         }
 
-        public void ProcessNow(in GigaChunkNodes nodes, ref MeshData meshData)
+        public void Process(in GigaChunkNodes nodes, ref MeshData meshData)
         {
             new MeshGeneratorJob(in nodes, ref meshData, in _processor).Run();
         }

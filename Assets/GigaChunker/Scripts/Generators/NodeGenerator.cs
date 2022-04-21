@@ -17,10 +17,10 @@ namespace GigaChunker.Generators
         {
             _processor = BurstCompiler.CompileFunctionPointer(processor);
         }
-        
-        public void ProcessNow(ref GigaChunkNodes nodes)
+
+        public void Process(ref GigaChunkNodes nodes, int3 position)
         {
-            new NodeGeneratorJob(in nodes, in _processor).Run();
+            new NodeGeneratorJob(in nodes, in position, in _processor).Run();
         }
 
         public delegate void ProcessNode(ref GigaNode node, in int3 nodePosition);
@@ -29,11 +29,14 @@ namespace GigaChunker.Generators
         private struct NodeGeneratorJob : IJob
         {
             private GigaChunkNodes _nodes;
+            private readonly int3 _position;
             private readonly FunctionPointer<ProcessNode> _processor;
 
-            public NodeGeneratorJob(in GigaChunkNodes nodes, in FunctionPointer<ProcessNode> processor)
+            public NodeGeneratorJob(in GigaChunkNodes nodes, in int3 position,
+                in FunctionPointer<ProcessNode> processor)
             {
                 _nodes = nodes;
+                _position = position;
                 _processor = processor;
             }
 
@@ -46,13 +49,14 @@ namespace GigaChunker.Generators
 
                 long dataIndex = 0;
                 int3 index3d = int3.zero;
-                for (int x = 0; x < _nodes.ChunkSize; x++)
+                int cSize = _nodes.ChunkSize;
+                for (int z = 0; z < cSize; z++)
                 {
-                    for (int y = 0; y < _nodes.ChunkSize; y++)
+                    for (int y = 0; y < cSize; y++)
                     {
-                        for (int z = 0; z < _nodes.ChunkSize; z++)
+                        for (int x = 0; x < cSize; x++)
                         {
-                            index3d.Set(x, y, z);
+                            index3d.Set(x, y, z, in _position);
                             ref GigaNode node = ref *(GigaNode*) (ptr + dataIndex);
                             _processor.Invoke(ref node, in index3d);
                             dataIndex += dataSize;

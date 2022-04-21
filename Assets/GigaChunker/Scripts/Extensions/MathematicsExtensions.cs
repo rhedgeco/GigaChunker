@@ -13,11 +13,11 @@ namespace GigaChunker.Extensions
             );
         }
 
-        public static void Set(this ref int3 value, int x, int y, int z)
+        public static void Set(this ref int3 value, int x, int y, int z, in int3 offset)
         {
-            value.x = x;
-            value.y = y;
-            value.z = z;
+            value.x = x + offset.x;
+            value.y = y + offset.y;
+            value.z = z + offset.z;
         }
         
         public static void Set(this ref float3 value, int x, int y, int z)
