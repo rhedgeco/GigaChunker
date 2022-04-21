@@ -73,17 +73,11 @@ namespace GigaChunker.Generators
                             if (cNode[7]->Type > 0) cubeIndex |= 0b_10000000;
                             if (cubeIndex is 0 or 255) continue;
 
-                            for (int i = 0; i < 16; i += 3)
+                            for (int i = cubeIndex * 16; MarchTables.Triangulation[i] != -1; i += 3)
                             {
-                                int index = cubeIndex * 16 + i;
-                                if (MarchTables.Triangulation[index] == -1) break;
-
-                                ref CornerRay r1 =
-                                    ref MarchTables.CornerRayFromEdge[MarchTables.Triangulation[index + 0]];
-                                ref CornerRay r2 =
-                                    ref MarchTables.CornerRayFromEdge[MarchTables.Triangulation[index + 1]];
-                                ref CornerRay r3 =
-                                    ref MarchTables.CornerRayFromEdge[MarchTables.Triangulation[index + 2]];
+                                ref CornerRay r1 = ref MarchTables.CornerRayFromEdge[MarchTables.Triangulation[i + 0]];
+                                ref CornerRay r2 = ref MarchTables.CornerRayFromEdge[MarchTables.Triangulation[i + 1]];
+                                ref CornerRay r3 = ref MarchTables.CornerRayFromEdge[MarchTables.Triangulation[i + 2]];
 
                                 float w1 = cNode[r1.Corner]->GetWeight(r1.Direction);
                                 float w2 = cNode[r2.Corner]->GetWeight(r2.Direction);
