@@ -14,12 +14,16 @@ namespace GigaChunker.DataTypes
             new(VertexAttribute.Position, stream: 0),
             new(VertexAttribute.Normal, stream: 1)
         };
-        
+
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+        private AtomicSafetyHandle _safetyHandle;
+#endif
+
         private readonly uint _bufferSize;
-        
+
         [NativeDisableUnsafePtrRestriction]
         private long* _indexCount;
-        
+
         [NativeDisableUnsafePtrRestriction]
         private long* _vertexCount;
 
@@ -37,6 +41,9 @@ namespace GigaChunker.DataTypes
 
         public MeshData(int bufferSize)
         {
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+            _safetyHandle = AtomicSafetyHandle.Create();
+#endif
             _bufferSize = (uint) bufferSize;
             _vertexCount = (long*) UnsafeUtility.Malloc(UnsafeUtility.SizeOf<uint>(),
                 UnsafeUtility.AlignOf<uint>(), Allocator.Persistent);
@@ -52,25 +59,25 @@ namespace GigaChunker.DataTypes
 
         public void Clear()
         {
-            *(uint*)_indexCount = 0;
-            *(uint*)_vertexCount = 0;
+            *(uint*) _indexCount = 0;
+            *(uint*) _vertexCount = 0;
         }
 
         public void AddVertex(float3 vertex, float3 normal)
         {
-            ref uint vertCount = ref *(uint*)_vertexCount;
+            ref uint vertCount = ref *(uint*) _vertexCount;
             if (vertCount >= _bufferSize) return;
             long vertOffset = vertCount * sizeof(float3);
-            *(float3*) ((long)_vertexBuffer + vertOffset) = vertex;
-            *(float3*) ((long)_normalBuffer + vertOffset) = normal;
+            *(float3*) ((long) _vertexBuffer + vertOffset) = vertex;
+            *(float3*) ((long) _normalBuffer + vertOffset) = normal;
             vertCount++;
         }
 
         public void AddIndex(uint index)
         {
-            ref uint indexCount = ref *(uint*)_indexCount;
+            ref uint indexCount = ref *(uint*) _indexCount;
             if (indexCount >= _bufferSize) return;
-            *(uint*) ((long)_indexBuffer + indexCount * sizeof(uint)) = index;
+            *(uint*) ((long) _indexBuffer + indexCount * sizeof(uint)) = index;
             indexCount++;
         }
 
@@ -84,13 +91,16 @@ namespace GigaChunker.DataTypes
 
             NativeArray<float3> vertexBuffer = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<float3>(
                 _vertexBuffer, vertexCount, Allocator.Invalid);
-            NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref vertexBuffer, AtomicSafetyHandle.Create());
             NativeArray<float3> normalBuffer = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<float3>(
                 _normalBuffer, vertexCount, Allocator.Invalid);
-            NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref normalBuffer, AtomicSafetyHandle.Create());
             NativeArray<uint> indexBuffer = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<uint>(
                 _indexBuffer, indexCount, Allocator.Invalid);
-            NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref indexBuffer, AtomicSafetyHandle.Create());
+
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+            NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref vertexBuffer, _safetyHandle);
+            NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref normalBuffer, _safetyHandle);
+            NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref indexBuffer, _safetyHandle);
+#endif
 
             mesh.subMeshCount = 1;
             SubMeshDescriptor descriptor = new(0, vertexCount);
@@ -106,6 +116,9 @@ namespace GigaChunker.DataTypes
 
         public void Dispose()
         {
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+            AtomicSafetyHandle.Release(_safetyHandle);
+#endif
             UnsafeUtility.Free(_vertexBuffer, Allocator.Persistent);
             UnsafeUtility.Free(_normalBuffer, Allocator.Persistent);
             UnsafeUtility.Free(_indexBuffer, Allocator.Persistent);
