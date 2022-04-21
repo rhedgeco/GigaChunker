@@ -28,7 +28,7 @@ public class MeshingSpeedLimitTester : MonoBehaviour
         _bounds.SetMinMax(Vector3.zero, Vector3.one * (chunkSize - 1));
 
         float3 position = transform.position;
-        NodeGenerator.Process(ref _chunkNodes, position.RoundToInt());
+        BaseNodeGenerator.Process(ref _chunkNodes, position.RoundToInt());
     }
 
     private void Update()
