@@ -34,7 +34,7 @@ namespace GigaChunker.Generators
             public unsafe void Execute()
             {
                 NativeArray<GigaNode> array = GigaChunkNodes.ExtractRawArray(ref _nodes);
-                if (!array.IsCreated) throw new ObjectDisposedException("GigaDataCollection is not created.");
+                if (!array.IsCreated) return;
                 long ptr = (long) array.GetUnsafePtr();
                 long dataSize = sizeof(GigaNode);
 
