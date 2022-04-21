@@ -7,4 +7,5 @@ and [Burst Compiler](https://docs.unity3d.com/Packages/com.unity.burst@1.6/manua
 using a algorithm modeled after [Marching Cubes](http://paulbourke.net/geometry/polygonise/),
 terrain can be generated on the CPU at lightning speeds.
 
+---
 ### [MIT License](LICENSE.md)
