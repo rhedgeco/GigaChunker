@@ -1,5 +1,6 @@
 using System;
 using GigaChunker.DataTypes;
+using GigaChunker.Generators.Node;
 using Unity.Burst;
 using Unity.Burst.CompilerServices;
 using Unity.Collections;
@@ -66,13 +67,13 @@ namespace GigaChunker.Generators
 
                             // populate necessary weights
                             if (Hint.Unlikely(x == 0 && y == 0 && z == 0))
-                                *weight = noise.cnoise((_position + new float3(x, y, z)) * CNoiseScale);
+                                *weight = TerrainNoise(_position + new float3(x, y, z));
                             if (Hint.Unlikely(y == 0 && x != voxelSize))
-                                *xWeight = noise.cnoise((_position + new float3(x + 1, y, z)) * CNoiseScale);
+                                *xWeight = TerrainNoise(_position + new float3(x + 1, y, z));
                             if (Hint.Unlikely(z == 0 && y != voxelSize))
-                                *yWeight = noise.cnoise((_position + new float3(x, y + 1, z)) * CNoiseScale);
+                                *yWeight = TerrainNoise(_position + new float3(x, y + 1, z));
                             if (Hint.Unlikely(z != voxelSize))
-                                *zWeight = noise.cnoise((_position + new float3(x, y, z + 1)) * CNoiseScale);
+                                *zWeight = TerrainNoise(_position + new float3(x, y, z + 1));
 
                             // get node pointers
                             GigaNode* node = (GigaNode*) (nodesPointer + i * nodeSizeOf);
@@ -100,6 +101,14 @@ namespace GigaChunker.Generators
                         }
                     }
                 }
+            }
+
+            private static float TerrainNoise(float3 point)
+            {
+                float elevation = NoiseGenerator.Perlin(point.xz, 3, 0.05f, 5, 0.08f);
+                float pointHeight = math.max(point.y + elevation, 0) / 20;
+                float ground = NoiseGenerator.Perlin(point, 3, 0.03f, 5, 0.10f) + 0.3f;
+                return ground - pointHeight;
             }
 
             private static unsafe sbyte CreateNodeWeight(float* baseWeight, float* altWeight)
