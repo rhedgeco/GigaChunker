@@ -67,9 +67,9 @@ namespace GigaChunker.Generators
                             // populate necessary weights
                             if (Hint.Unlikely(x == 0 && y == 0 && z == 0))
                                 *weight = noise.cnoise((_position + new float3(x, y, z)) * CNoiseScale);
-                            if (Hint.Unlikely( /*y == 0 && */x != voxelSize))
+                            if (Hint.Unlikely(y == 0 && x != voxelSize))
                                 *xWeight = noise.cnoise((_position + new float3(x + 1, y, z)) * CNoiseScale);
-                            if (Hint.Unlikely( /*z == 0 && */y != voxelSize))
+                            if (Hint.Unlikely(z == 0 && y != voxelSize))
                                 *yWeight = noise.cnoise((_position + new float3(x, y + 1, z)) * CNoiseScale);
                             if (Hint.Unlikely(z != voxelSize))
                                 *zWeight = noise.cnoise((_position + new float3(x, y, z + 1)) * CNoiseScale);
@@ -93,7 +93,7 @@ namespace GigaChunker.Generators
                             node->XWeight.Positive = xByteWeight;
                             node->YWeight.Positive = yByteWeight;
                             node->ZWeight.Positive = zByteWeight;
-                            
+
                             if (Hint.Unlikely(x != voxelSize)) xNode->XWeight.Negative = flipXByteWeight;
                             if (Hint.Unlikely(y != voxelSize)) yNode->YWeight.Negative = flipYByteWeight;
                             if (Hint.Unlikely(z != voxelSize)) zNode->ZWeight.Negative = flipZByteWeight;
