@@ -1,6 +1,7 @@
 using GigaChunker.DataTypes;
 using GigaChunker.Extensions;
 using GigaChunker.Generators;
+using GigaChunker.Generators.Node;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;

@@ -1,6 +1,5 @@
 using System;
 using GigaChunker.DataTypes;
-using GigaChunker.Generators.Node;
 using Unity.Burst;
 using Unity.Burst.CompilerServices;
 using Unity.Collections;
@@ -8,7 +7,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace GigaChunker.Generators
+namespace GigaChunker.Generators.Node
 {
     public static class BaseNodeGenerator
     {
@@ -95,6 +94,7 @@ namespace GigaChunker.Generators
                             node->YWeight.Positive = yByteWeight;
                             node->ZWeight.Positive = zByteWeight;
 
+                            // set neighbor node negative values
                             if (Hint.Unlikely(x != voxelSize)) xNode->XWeight.Negative = flipXByteWeight;
                             if (Hint.Unlikely(y != voxelSize)) yNode->YWeight.Negative = flipYByteWeight;
                             if (Hint.Unlikely(z != voxelSize)) zNode->ZWeight.Negative = flipZByteWeight;
