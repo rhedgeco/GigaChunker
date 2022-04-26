@@ -2,7 +2,6 @@ using GigaChunker.DataTypes;
 using GigaChunker.Extensions;
 using GigaChunker.Generators;
 using GigaChunker.Generators.Node;
-using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -10,8 +9,6 @@ using UnityEngine;
 public class MeshingSpeedLimitTester : MonoBehaviour
 {
     [SerializeField, Range(2, 64)] private int chunkSize = 32;
-
-    [Header("Debug Nodes"), SerializeField] private bool debugNodes;
 
     private MeshFilter _filter;
 
@@ -38,25 +35,6 @@ public class MeshingSpeedLimitTester : MonoBehaviour
         VoxelMarcher.MarchNodes(in _chunkNodes, ref _meshData);
         DestroyImmediate(_filter.sharedMesh);
         _filter.sharedMesh = _meshData.CreateMesh(ref _bounds);
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (!debugNodes) return;
-        NativeArray<GigaNode> _nodeArray = GigaChunkNodes.ExtractRawArray(ref _chunkNodes);
-        for (int x = 0; x < _chunkNodes.ChunkSize; x++)
-        {
-            for (int y = 0; y < _chunkNodes.ChunkSize; y++)
-            {
-                for (int z = 0; z < _chunkNodes.ChunkSize; z++)
-                {
-                    GigaNode node = _nodeArray[x + y * _chunkNodes.ChunkSize
-                                                 + z * _chunkNodes.ChunkSize * _chunkNodes.ChunkSize];
-                    Gizmos.color = node.Type == 0 ? Color.black : Color.white;
-                    Gizmos.DrawSphere(new(x, y, z), 0.125f);
-                }
-            }
-        }
     }
 
     private void OnDestroy()
